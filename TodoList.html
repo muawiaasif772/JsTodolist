@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  <title>Todo List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      margin-top: -4px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      background-color: rgb(69, 83, 177);
+      padding-bottom: 10%;
+      text-align: center;
+      padding-top: 7px;
+      width: 100%;
+      margin-top: -29px;
+      padding-left: 38px;
+      margin-left: -19px;
+      color: white;
+    }
+
+    .add-task {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .add-task input[type="text"] {
+      flex-grow: 1;
+      padding: 10px;
+      border: none;
+      width: 300px;
+    }
+
+    .add-task input:focus {
+      outline: none;
+      border: none;
+      background-color: rgb(232, 239, 253);
+    }
+
+    .add-task button {
+      margin-left: 30px;
+      padding: 15px 30px;
+      background-color: blue;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      position: relative;
+      border-bottom: 1px solid gainsboro;
+    }
+
+    .delete-btn {
+        
+      padding: 5px 10px;
+      background-color:rgb(222,92,133);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 10px;
+      
+    }
+
+
+    .container p {
+      margin-bottom: 0px;
+      color: rgb(69, 83, 177);
+    }
+
+    li:hover .delete-btn,
+    li:hover .edit-btn {
+      display: inline-block;
+    }
+
+    .bg {
+      background-color: rgb(69, 83, 177);
+      width: 100%;
+      height: 80px;
+    }
+
+    #deleteSelectedBtn {
+      display: none;
+      margin-top: 20px;
+      padding: 15px 30px;
+      background-color: rgb(222,92,133);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="container">
+    <h1>Todo List</h1>
+    <p>Add a new task</p>
+    <div class="add-task">
+      <input type="text" id="taskInput">
+      <button id="addTaskBtn">Add Todo</button>
+    </div>
+    <hr style="width: 75%; height: 1px; margin-left: 0px; margin-top: -15px; background-color: rgb(21, 21, 206);">
+    <ul id="taskList"></ul>
+    <button id="deleteSelectedBtn">Delete Selected </button>
+  </div>
+  <script>
+    let taskInput = document.getElementById("taskInput");
+    let btn = document.getElementById("addTaskBtn");
+    let taskList = document.getElementById("taskList");
+    let deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+    let tasks = [];
+
+    btn.addEventListener("click", function () {
+      let tasktext = taskInput.value.trim();
+      if (tasktext !== "") {
+        tasks.push({ text: tasktext, completed: false });
+        taskRender();
+        taskInput.value = "";
+      }
+    });
+
+    deleteSelectedBtn.addEventListener("click", function () {
+      tasks = tasks.filter(task => !task.completed);
+      taskRender();
+    });
+
+    function taskRender() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        let li = document.createElement("li");
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+        checkbox.addEventListener("change", () => toggleTaskCompletion(index));
+        li.appendChild(checkbox);
+
+        let taskText = document.createElement("span");
+        taskText.textContent = task.text;
+        li.appendChild(taskText);
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = '<i background-color: rgb(21, 21, 206) class="fa-sharp fa-solid fa-xmark"></i>';
+        deleteBtn.className = "delete-btn";
+        deleteBtn.addEventListener("click", () => deleteTask(index));
+        li.appendChild(deleteBtn);
+        
+        deleteBtn.style.display = "inline-block";   
+        taskList.appendChild(li);
+      });
+      updateDeleteSelectedBtn();
+    }
+
+    function toggleTaskCompletion(index) {
+      tasks[index].completed = !tasks[index].completed;
+      updateDeleteSelectedBtn();
+    }
+
+    function updateDeleteSelectedBtn() {
+      const hasCompletedTasks = tasks.some(task => task.completed);
+      deleteSelectedBtn.style.display = hasCompletedTasks ? "block" : "none";
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      taskRender();
+    }
+  </script>
+</body>
+</html>
